@@ -27,4 +27,4 @@ Cheers
 Simon
 
 ## Hot fix
-It wouldn't be a correct "lunch" without a hot fix right? To be honest but it amerress me to admit but I haven't tested enough and found a bug in my code where the first number is bigger than the second. I fixed it and pushed again. So let me add another point to the list above before the launch: TESTING!
+It wouldn't be a correct "lunch" without a hot fix right? To be honest but it amerress me to admit but I haven't tested enough and found a bug in my code where the first number is bigger than the second. I fixed it by changing the approach (Constructive) and pushed again. So let me add another point to the list above before the launch: TESTING!

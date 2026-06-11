@@ -4,57 +4,54 @@ import { useState } from "react";
 
 const COUNT = 6;
 const HISTORY_SIZE = 3;
-const MAX_ATTEMPTS = 500;
 
 const ALL_DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 // The result must always have exactly this up/down shape.
+// "<" means a step goes up, ">" means it goes down.
+// <<>>< -> 1st<2nd, 2nd<3rd, 3rd>4th, 4th>5th, 5th<6th.
 // NOTE: this is a deliberate deviation from the brief. The brief asks for the
 // pattern to DIFFER from the last 3 generations; here we instead force every
 // result to match this one fixed shape.
 const TARGET_PATTERN = "<<>><";
 
-// Shuffle the digits 0-9 into a random order, then keep the first COUNT.
-// Because we shuffle real digits, they are random and never repeat.
-function pickRandomDigits(): number[] {
+// Pick COUNT distinct digits out of 0-9, sorted ascending.
+// Sorting makes them easy to arrange into a specific shape below.
+function pickAscendingDigits(): number[] {
   const shuffled = [...ALL_DIGITS].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, COUNT);
+  return shuffled.slice(0, COUNT).sort((a, b) => a - b);
 }
 
-// Describe the "shape" of a result by comparing each digit to the next.
-// "<" means it went up, ">" means it went down.
-// Example: 0-5-6-2-1-9 -> "<<>><" (0<5, 5<6, 6>2, 2>1, 1<9).
-function getPattern(numbers: number[]): string {
-  return numbers
-    .map((digit, i) => (digit < numbers[i + 1] ? "<" : ">"))
-    .slice(0, -1)
-    .join("");
-}
+// Build a sequence that matches TARGET_PATTERN directly, with no guessing.
+// Start from the ascending digits (which already satisfy an all-"<" shape),
+// then reverse each maximal run of ">" so those steps point downward instead.
+// This is O(n) and always succeeds on the first try.
+function generateForPattern(): number[] {
+  const result = pickAscendingDigits();
 
-// Draw random sets of digits until one happens to match TARGET_PATTERN.
-// Roughly 3.6% of draws match, so this finds one in ~28 tries on average.
-// Since the pattern is now fixed, we instead avoid repeating the exact same
-// numbers as the last few generations so the output still feels fresh.
-function generateForPattern(recentResults: string[]): number[] {
-  for (let tries = 0; tries < MAX_ATTEMPTS; tries++) {
-    const candidate = pickRandomDigits();
-
-    if (
-      getPattern(candidate) === TARGET_PATTERN &&
-      !recentResults.includes(candidate.join(""))
-    ) {
-      return candidate;
+  let i = 0;
+  while (i < TARGET_PATTERN.length) {
+    if (TARGET_PATTERN[i] === ">") {
+      let j = i;
+      while (j < TARGET_PATTERN.length && TARGET_PATTERN[j] === ">") j++;
+      // Reverse the slice spanning this descending run (positions i..j).
+      reverseRange(result, i, j);
+      i = j;
+    } else {
+      i++;
     }
   }
 
-  // Fallback: drop the "don't repeat" guard and just keep going until the
-  // shape matches. There are thousands of valid sequences, so this is quick
-  // and can never loop forever.
-  let candidate = pickRandomDigits();
-  while (getPattern(candidate) !== TARGET_PATTERN) {
-    candidate = pickRandomDigits();
+  return result;
+}
+
+// Reverse arr[start..end] in place (end inclusive).
+function reverseRange(arr: number[], start: number, end: number): void {
+  while (start < end) {
+    [arr[start], arr[end]] = [arr[end], arr[start]];
+    start++;
+    end--;
   }
-  return candidate;
 }
 
 export default function NumberGenerator() {
@@ -65,7 +62,13 @@ export default function NumberGenerator() {
   const [recentResults, setRecentResults] = useState<string[]>([]);
 
   const handleGenerate = () => {
-    const next = generateForPattern(recentResults);
+    // Build a result, re-rolling if it matches one of the last HISTORY_SIZE
+    // generations so the user never sees the same numbers back-to-back.
+    let next = generateForPattern();
+    while (recentResults.includes(next.join(""))) {
+      next = generateForPattern();
+    }
+
     setNumbers(next);
     setRecentResults((prev) => [next.join(""), ...prev].slice(0, HISTORY_SIZE));
   };

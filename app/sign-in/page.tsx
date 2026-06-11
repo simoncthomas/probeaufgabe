@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function SignInPage() {
   return (
-    <div className="relative flex flex-1 flex-col items-center justify-start px-4 pt-[88px] pb-[120px] font-sans sm:justify-center sm:py-16">
+    <div className="relative flex flex-1 flex-col items-center justify-center px-4 py-16 font-sans">
       <main className="flex w-full max-w-[420px] flex-col items-center rounded-2xl bg-white px-6 py-10 shadow-[0_24px_24px_rgba(145,158,171,0.16)] sm:p-10">
         <div className="flex flex-col items-center gap-3 pb-8 text-center">
           <h1 className="font-heading text-xl font-semibold leading-[30px] text-[#1c252e] sm:text-2xl sm:leading-9">

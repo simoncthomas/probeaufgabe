@@ -56,7 +56,7 @@ export default function SignInPage() {
 
           <button
             type="submit"
-            className="flex h-12 w-full items-center justify-center rounded-lg bg-black text-[15px] font-bold leading-[26px] text-white transition-colors hover:bg-[#1c252e]"
+            className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-black text-[15px] font-bold leading-[26px] text-white transition-colors hover:bg-[#1c252e]"
           >
             Sign in
           </button>

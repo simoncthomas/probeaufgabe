@@ -9,12 +9,12 @@ export const metadata: Metadata = {
 
 export default function GeneratePage() {
   return (
-    <div className="relative flex flex-1 flex-col items-center justify-start px-4 pt-[88px] pb-[120px] font-sans sm:justify-center sm:py-16">
+    <div className="relative flex flex-1 flex-col items-center justify-center px-4 py-16 font-sans">
       <header className="absolute inset-x-0 top-0 flex h-16 items-center justify-end px-4 sm:h-[72px] sm:px-6">
         <button
           type="button"
           aria-label="Settings"
-          className="flex size-10 items-center justify-center rounded-full text-[#1c252e] transition-colors hover:bg-[rgba(145,158,171,0.12)]"
+          className="flex size-10 cursor-pointer items-center justify-center rounded-full text-[#1c252e] transition-colors hover:bg-[rgba(145,158,171,0.12)]"
         >
           <SettingsIcon />
         </button>

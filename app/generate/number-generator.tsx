@@ -36,13 +36,20 @@ function generateUniqueNumbers(recentPatterns: string[]): number[] {
     }
   }
 
-  return pickRandomDigits();
+  // Fallback: keep going until the pattern is fresh.
+  // Safe from infinite loops: at most 3 patterns are forbidden out of 32 possible.
+  let candidate = pickRandomDigits();
+  while (recentPatterns.includes(getPattern(candidate))) {
+    candidate = pickRandomDigits();
+  }
+  return candidate;
 }
 
 export default function NumberGenerator() {
   const [numbers, setNumbers] = useState<(number | null)[]>(
     Array(COUNT).fill(null),
   );
+
   const [recentPatterns, setRecentPatterns] = useState<string[]>([]);
 
   const handleGenerate = () => {
